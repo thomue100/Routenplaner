@@ -113,6 +113,11 @@ def index():
         for stadt in bundeslaender.values():
             if request.form.get(stadt):
                 selected_cities.append(stadt)
+        startpunkt = request.form.get("startpunkt")
+        if startpunkt:
+            selected_cities.append(startpunkt)
+        if startpunkt in selected_cities:
+            selected_cities.remove(startpunkt)
         #Eingefügt, weil sonst nach dem Drucken die Werte weg sind
         #Das konnte ich auf andere Weise auch mit ChatGPT nicht beheben
         if len(selected_cities) > 1:
@@ -145,6 +150,14 @@ def index():
         form += f'<label><input type="checkbox" class="checkbox" name="{stadt}" value="{stadt}" {checked}>{stadt}</label>'
 
     form += "</div>"
+
+    form += '<br>'
+    form += '<label for="startpunkt">Startpunkt:</label>'
+    form += '<select id="startpunkt" name="startpunkt">'
+    for city in selected_cities:
+        form += f'<option value="{city}">{city}</option>'
+    form += '</select>'
+
     form += "<br>"
     form += '<button class="btn" type="submit" name="berechnen">Berechnen</button>'
     form += '<button class="btn" type="submit" name="reset">Zurücksetzen</button>'
