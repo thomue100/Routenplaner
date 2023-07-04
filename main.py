@@ -49,6 +49,7 @@ stadt_koordinaten = {
     "Erfurt": (50.978700, 11.032830),
 }
 
+
 def berechne_gesamtstrecke(selected_cities):
     gesamtstrecke = 0.0
     for i in range(len(selected_cities) - 1):
@@ -59,6 +60,7 @@ def berechne_gesamtstrecke(selected_cities):
         distanz = geodesic(koordinaten1, koordinaten2).kilometers
         gesamtstrecke += distanz
     return round(gesamtstrecke)
+
 
 def berechne_kompakte_route(selected_cities):
     unvisited_cities = set(selected_cities)
@@ -87,17 +89,19 @@ def berechne_kompakte_route(selected_cities):
 
     return tour
 
+
 def berechne_entfernung(stadt1, stadt2):
     koordinaten1 = stadt_koordinaten[stadt1]
     koordinaten2 = stadt_koordinaten[stadt2]
     distanz = geodesic(koordinaten1, koordinaten2).kilometers
-    return round(distanz,2)
+    return round(distanz, 2)
 
 
 def berechne_dauer(stadt1, stadt2):
     entfernung = berechne_entfernung(stadt1, stadt2)
-    dauer = entfernung / 100 # Annahme: Durchschnittsgeschwindigkeit von 100 km/h
-    return round(dauer,2)
+    dauer = entfernung / 100  # Annahme: Durchschnittsgeschwindigkeit von 100 km/h
+    return round(dauer, 2)
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -113,18 +117,20 @@ def index():
         for stadt in bundeslaender.values():
             if request.form.get(stadt):
                 selected_cities.append(stadt)
-        #Eingefügt, weil sonst nach dem Drucken die Werte weg sind
-        #Das konnte ich auf andere Weise auch mit ChatGPT nicht beheben
+        # Eingefügt, weil sonst nach dem Drucken die Werte weg sind
+        # Das konnte ich auf andere Weise auch mit ChatGPT nicht beheben
         if len(selected_cities) > 1:
             kompakteste_route = berechne_kompakte_route(selected_cities)
             gesamtstrecke = berechne_gesamtstrecke(kompakteste_route)
-            gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i+1]) for i in range(len(kompakteste_route)-1)])
+            gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i + 1]) for i in
+                               range(len(kompakteste_route) - 1)])
 
         if "berechnen" in request.form:
             if len(selected_cities) > 1:
                 kompakteste_route = berechne_kompakte_route(selected_cities)
                 gesamtstrecke = berechne_gesamtstrecke(kompakteste_route)
-                gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i+1]) for i in range(len(kompakteste_route)-1)])
+                gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i + 1]) for i in
+                                   range(len(kompakteste_route) - 1)])
 
         if "reset" in request.form:
             selected_cities = []
@@ -132,10 +138,10 @@ def index():
             kompakteste_route = []
             gesamtdauer = 0.0
 
-        #Zum Debuggen
-        #print("POST request")
-        #print("Selected cities:", selected_cities)
-        #print("Compact route:", kompakteste_route)
+        # Zum Debuggen
+        # print("POST request")
+        # print("Selected cities:", selected_cities)
+        # print("Compact route:", kompakteste_route)
 
     form = "<h1>Berechnen Sie Ihre Rundreise</h1>"
     form += '<div class="checkbox-container">'
@@ -150,7 +156,7 @@ def index():
     form += '<button class="btn" type="submit" name="reset">Zurücksetzen</button>'
     form += '<button class="btn" onclick="window.print()">Drucken</button>'
 
-     # Erstelle den Inhalt der E-Mail
+    # Erstelle den Inhalt der E-Mail
     subject = "Ausgewählte Städte und kompakte Route"
     body = "Ausgewählte Städte: " + ', '.join(selected_cities) + " - "
     body += "Kompakte Route: " + ' -> '.join(kompakteste_route)
@@ -337,8 +343,10 @@ def index():
     """
     )
 
+
 if __name__ == "__main__":
-    window = webview.create_window(
-        "Routenplaner für Außendienstmitarbeiter", app, width=1000, height=1000, http_port=5000
-    )
-    webview.start()
+    # window = webview.create_window(
+    #     "Routenplaner für Außendienstmitarbeiter", app, width=1000, height=1000
+    # )
+    # webview.start(http_server=True, http_port=5000)
+    app.run()
