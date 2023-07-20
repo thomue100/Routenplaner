@@ -127,10 +127,16 @@ def index():
             gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i+1]) for i in range(len(kompakteste_route)-1)])
 
         if "berechnen" in request.form:
+            selected_cities = [stadt for stadt in bundeslaender.values() if request.form.get(stadt)]
+
             if len(selected_cities) > 1:
                 kompakteste_route = berechne_kompakte_route(selected_cities)
+                startpunkt = request.form["selected_city"]
+                while kompakteste_route[0] != startpunkt:
+                    kompakteste_route = kompakteste_route[1:] + [kompakteste_route[0]]
                 gesamtstrecke = berechne_gesamtstrecke(kompakteste_route)
-                gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i+1]) for i in range(len(kompakteste_route)-1)])
+                gesamtdauer = sum([berechne_dauer(kompakteste_route[i], kompakteste_route[i + 1]) for i in
+                                   range(len(kompakteste_route) - 1)])
 
         if "reset" in request.form:
             selected_cities = []
